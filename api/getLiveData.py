@@ -10,7 +10,7 @@ def makeRequest(function, symbol, interval, month):
         "symbol": symbol,
         "interval": interval,
         "month" : month,
-        "apikey": "3ER47V2K5KWDABOO"
+        "apikey": getenv("api_key")
     }
     print(params)
     response = requests.get(url, params=params)

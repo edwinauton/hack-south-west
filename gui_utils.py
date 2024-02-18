@@ -2,7 +2,7 @@ import json
 import os
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QPushButton, QLabel, QSizePolicy, QFrame
+from PyQt5.QtWidgets import QPushButton, QLabel, QSizePolicy, QFrame, QDoubleSpinBox
 
 from stock import Stock
 
@@ -20,6 +20,11 @@ def create_label(text):
     label.setAlignment(Qt.AlignCenter)
     label.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
     return label
+
+
+def create_spinbox():
+    spinbox = QDoubleSpinBox()
+    return spinbox
 
 
 # Function to create a dividing horizontal line

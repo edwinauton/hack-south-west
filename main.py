@@ -33,7 +33,7 @@ class Window(QWidget):
         spacer = utils.create_label("")
         header.addWidget(spacer)
 
-        price = utils.create_label("Price")
+        price = utils.create_label("Price  ")
         price.setObjectName("subheading")
         header.addWidget(price)
 
@@ -45,17 +45,18 @@ class Window(QWidget):
         equity.setObjectName("subheading")
         header.addWidget(equity)
 
-        daily_return = utils.create_label("Return")
+        daily_return = utils.create_label("  Return")
         daily_return.setObjectName("subheading")
         header.addWidget(daily_return)
 
+        header.addWidget(spacer)
         header.addWidget(spacer)
         header.addWidget(spacer)
 
         stocks_owned = utils.create_label("Stocks Owned")
         stocks_owned.setObjectName("subheading")
         header.addWidget(stocks_owned)
-        header.setContentsMargins(10, 10, 25, 10)
+        header.setContentsMargins(40, 10, 25, 10)
 
         self.vbox.addLayout(header)
 
@@ -88,15 +89,18 @@ class Window(QWidget):
             daily_return = utils.create_label(value)
             utils.colour(daily_return)
 
-            stocks_owned = utils.create_label(stock.number_owned)
+            stocks_owned = utils.create_label(f"{stock.number_owned:.2f}")
+
+            spinbox = utils.create_spinbox()
+            spinbox.setFixedWidth(125)
 
             # Buy Button
             buy_button = utils.create_button("Buy")
-            buy_button.clicked.connect(partial(self.update_stock, 1, stock, equity, daily_return, stocks_owned))
+            buy_button.clicked.connect(partial(self.update_stock, spinbox, stock, equity, daily_return, stocks_owned, selling=False))
 
             # Sell Button
             sell_button = utils.create_button("Sell")
-            sell_button.clicked.connect(partial(self.update_stock, -1, stock, equity, daily_return, stocks_owned))
+            sell_button.clicked.connect(partial(self.update_stock, spinbox, stock, equity, daily_return, stocks_owned, selling=True))
 
             # Setup and add cells to row
             row = QHBoxLayout()
@@ -106,6 +110,7 @@ class Window(QWidget):
             row.addWidget(equity)
             row.addWidget(daily_return)
             row.addWidget(buy_button)
+            row.addWidget(spinbox)
             row.addWidget(sell_button)
             row.addWidget(stocks_owned)
 
@@ -151,13 +156,15 @@ class Window(QWidget):
         self.update()
 
     # Function to update all values changed when a stock is sold/bought
-    def update_stock(self, value, stock, equity, daily_return, stocks_owned):
-        if stock.number_owned > 0 or value > 0:
+    def update_stock(self, spinbox, stock, equity, daily_return, stocks_owned, selling):
+        value = spinbox.value() if not selling else -spinbox.value()
+
+        if not selling or stock.number_owned >= -value:
             stock.number_owned += value
-            stocks_owned.setText(str(stock.number_owned))
+            stocks_owned.setText(f"{stock.number_owned:.2f}")
             stock.update()
-            equity.setText(str(stock.equity))
-            daily_return.setText(str(stock.daily_return))
+            equity.setText(utils.format(str(stock.equity)))
+            daily_return.setText(utils.format(str(stock.daily_return)))
 
             value = utils.format(self.calculate_total_equity())
             self.portfolio_value.setText(f"\n\nPortfolio Value: {value}")

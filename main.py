@@ -118,11 +118,11 @@ class Window(QWidget):
 
         # Titles
         value = utils.format(self.calculate_total_equity())
-        self.portfolio_value = utils.create_label(f"Portfolio Value: {value}")
+        self.portfolio_value = utils.create_label(f"\n\nPortfolio Value: {value}")
         self.portfolio_value.setObjectName("heading")
         layout.addWidget(self.portfolio_value, 0, 1, 1, 1)
         value = utils.format(self.calculate_overall_return())
-        self.overall_return = utils.create_label(f"Today's Return: {value}")
+        self.overall_return = utils.create_label(f"\nToday's Return: {value}")
         utils.colour(self.overall_return)
         layout.addWidget(self.overall_return, 1, 1, 1, 1)
 
@@ -142,7 +142,7 @@ class Window(QWidget):
         self.setWindowTitle("Stock Trading Simulator")
         self.setWindowIcon(QIcon("styles/icon.jpg"))
         self.setGeometry(10, 10, 2560, 1440)
-        self.setMinimumSize(1500, 900)
+        self.setMinimumSize(1600, 900)
         self.setLayout(layout)
         self.show()
 
@@ -161,9 +161,9 @@ class Window(QWidget):
             daily_return.setText(str(stock.daily_return))
 
             value = utils.format(self.calculate_total_equity())
-            self.portfolio_value.setText(f"Portfolio Value: {value}")
+            self.portfolio_value.setText(f"\n\nPortfolio Value: {value}")
             value = utils.format(self.calculate_overall_return())
-            self.overall_return.setText(f"Today's Return: {value}")
+            self.overall_return.setText(f"\nToday's Return: {value}")
             utils.colour(self.overall_return)
 
     # Function to plot and stylise graph

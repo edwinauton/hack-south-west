@@ -30,7 +30,7 @@ def create_line():
     return line
 
 
-# Function to add a $ sign in front of a value
+# Function to add a '$' sign in front of a value
 def format(data):
     string = str(data)
     if string[0] == "-":

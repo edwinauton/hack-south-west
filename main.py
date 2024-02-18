@@ -123,7 +123,7 @@ class Window(QWidget):
         layout.addWidget(self.portfolio_value, 0, 1, 1, 1)
         value = utils.format(self.calculate_overall_return())
         self.overall_return = utils.create_label(f"Today's Return: {value}")
-        utils.colour_heading(self.overall_return)
+        utils.colour(self.overall_return)
         layout.addWidget(self.overall_return, 1, 1, 1, 1)
 
         # Scrollable Table

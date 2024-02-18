@@ -3,10 +3,10 @@ import json
 import pandas as pd
 
 
-class Share:
-	def __init__(self, json_file, shares_owned):
+class Stock:
+	def __init__(self, json_file, stocks_owned):
 		self.json_file = json_file
-		self.number_owned = shares_owned
+		self.number_owned = stocks_owned
 		self.ticker = self.process_json()[0]
 		self.start_price = self.process_json()[1]
 		self.change = self.process_json()[2]

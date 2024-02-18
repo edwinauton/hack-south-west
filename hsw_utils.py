@@ -58,7 +58,7 @@ def colour_heading(heading):
 # Function to create a list of stocks from a file
 def get_stocks_list():
     # Read stocks stored in file
-    with open("stock_record.json") as f:
+    with open("resources/stock_record.json") as f:
         data = json.load(f)
 
     stocks_list = []

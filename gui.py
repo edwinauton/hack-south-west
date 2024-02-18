@@ -2,12 +2,10 @@ import os
 import json
 import sys
 from functools import partial
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QApplication, QLabel, QGridLayout, QScrollArea, QWidget, QHBoxLayout, QVBoxLayout,
-							 QPushButton, QSizePolicy)
+from PyQt5.QtWidgets import (QApplication, QLabel, QGridLayout, QScrollArea, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QSizePolicy, QFrame)
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt5.QtGui import QIcon
 from share import Share
@@ -18,6 +16,12 @@ def create_button(text):
 	button = QPushButton()
 	button.setText(text)
 	return button
+
+def create_line():
+	line = QFrame()
+	line.setFrameShape(QFrame.HLine)
+	line.setObjectName("line")
+	return line
 
 def format(data):
 	string = str(data)
@@ -31,7 +35,7 @@ def create_label(text):
 	"""Creates a label with the given text and centres it"""
 	label = QLabel(text)
 	label.setAlignment(Qt.AlignCenter)
-	label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+	label.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
 	return label
 
 
@@ -61,7 +65,7 @@ class Window(QWidget):
 		self.scroll = QScrollArea()
 		self.widget = QWidget()
 		self.table = QVBoxLayout()
-		self.profile_value = QLabel()
+		self.portfolio_value = QLabel()
 		self.overall_return = QLabel()
 		self.ticker = QPushButton()
 		self.last_price = QLabel()
@@ -77,9 +81,8 @@ class Window(QWidget):
 		# Table Header
 		header = QHBoxLayout()
 
-		ticker = create_label("Ticker")
-		ticker.setObjectName("subheading")
-		header.addWidget(ticker)
+		spacer = create_label("")
+		header.addWidget(spacer)
 
 		price = create_label("Price")
 		price.setObjectName("subheading")
@@ -97,7 +100,6 @@ class Window(QWidget):
 		daily_return.setObjectName("subheading")
 		header.addWidget(daily_return)
 
-		spacer = create_label("")
 		header.addWidget(spacer)
 		header.addWidget(spacer)
 
@@ -106,9 +108,11 @@ class Window(QWidget):
 		header.addWidget(shares_owned)
 
 		self.table.addLayout(header)
+		self.table.addWidget(create_line())
 
 		# Add spacing after heading
-		self.table.insertSpacing(1, 25)
+		self.table.insertSpacing(1, 10)
+		self.table.addWidget(create_line())
 
 		shares = get_shares_list()
 
@@ -156,14 +160,15 @@ class Window(QWidget):
 			# Share Number
 			row.addWidget(self.shares_owned)
 			self.table.addLayout(row)
+			self.table.addWidget(create_line())
 
 		# Setup Grid
 		layout = QGridLayout()
 
 		# Titles
-		self.profile_value = create_label(f"Profile Value: {format(round(sum(share.equity for share in shares), 2))}")
-		self.profile_value.setObjectName("heading")
-		layout.addWidget(self.profile_value, 0, 1, 1, 1)
+		self.portfolio_value = create_label(f"Portfolio Value: {format(round(sum(share.equity for share in shares), 2))}")
+		self.portfolio_value.setObjectName("heading")
+		layout.addWidget(self.portfolio_value, 0, 1, 1, 1)
 		self.overall_return = create_label(f"Today's Return: {format(round(sum(share.daily_return for share in shares), 2))}")
 		self.overall_return.setObjectName("heading")
 		layout.addWidget(self.overall_return, 1, 1, 1, 1)
@@ -172,6 +177,7 @@ class Window(QWidget):
 		self.widget.setLayout(self.table)
 		self.scroll.setWidgetResizable(True)
 		self.scroll.setWidget(self.widget)
+		self.scroll.setFrameShape(QFrame.NoFrame)
 		layout.addWidget(self.scroll, 0, 3, 3, 1)
 
 		# Graph
@@ -181,8 +187,8 @@ class Window(QWidget):
 		# Window Properties
 		self.setWindowTitle('Stock Trading Simulator')
 		self.setWindowIcon(QIcon("icon.jpg"))
-		self.setGeometry(10, 10, 1920, 1080)
-		self.setMinimumSize(1280, 720)
+		self.setGeometry(10, 10, 2560, 1440)
+		self.setMinimumSize(1500, 900)
 		self.setLayout(layout)
 		self.show()
 
@@ -192,7 +198,6 @@ class Window(QWidget):
 
 	def update_shares(self, value, share):
 		share.number_owned += value
-
 		# Save shares information to file
 		with open("share_record.json") as f:
 			data = json.load(f)
@@ -205,15 +210,18 @@ class Window(QWidget):
 		self.figure.clear()
 		graph = self.figure.add_subplot(111)
 		graph.xaxis.set_visible(False)
+		graph.yaxis.label.set_color('#2da9b9')
+		graph.tick_params(axis='y', colors='#2da9b9')
 		for axis in ['top', 'bottom', 'left', 'right']:
 			graph.spines[axis].set_color('#2da9b9')
 			graph.spines[axis].set_linewidth(3)
+
 		graph.plot(data[0], data[1], color='#2da9b9', linewidth=2, marker='.', linestyle='-')
 		self.canvas.draw()
 
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	app.setStyleSheet(Path("styles.qss").read_text())
+	app.setStyleSheet(open("styles.qss").read())
 	ex = Window()
 	sys.exit(app.exec_())

@@ -8,25 +8,9 @@
      color: #2da9b9;
      font-size: 35px;
 }
- QLabel#heading_gain {
-     color: #076105;
-     font-size: 30px;
-}
- QLabel#heading_loss {
-     color: #9f1919;
-     font-size: 30px;
-}
  QLabel#subheading {
      color: #2da9b9;
      font-size: 25px;
-}
- QLabel#gain {
-     color: #076105;
-     font-size: 18;
-}
- QLabel#loss {
-     color: #9f1919;
-     font-size: 18;
 }
  QPushButton {
      background-color: #2da9b9;
@@ -45,7 +29,7 @@
  QScrollBar:vertical {
      border: 2px solid #2da9b9;
      background: #ffffff;
-     width: 20px;
+     width: 15px;
      margin: 0px 0px 0px 0px;
 }
  QScrollBar::handle:vertical {

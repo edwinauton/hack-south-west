@@ -42,17 +42,9 @@ def format(data):
 # Function to colour regular loss/gain figures
 def colour(label):
     if "-" in label.text():
-        label.setObjectName("loss")
+        label.setStyleSheet("color: #9f1919;")
     else:
-        label.setObjectName("gain")
-
-
-# Function to colour main loss/gain figure
-def colour_heading(heading):
-    if "-" in heading.text():
-        heading.setObjectName("heading_loss")
-    else:
-        heading.setObjectName("heading_gain")
+        label.setStyleSheet("color: #076105;")
 
 
 # Function to create a list of stocks from a file

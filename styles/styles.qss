@@ -25,6 +25,7 @@
 }
  QFrame#line {
      background-color: #2da9b9;
+     color: #2da9b9;
 }
  QScrollBar:vertical {
      border: 2px solid #2da9b9;

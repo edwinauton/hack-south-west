@@ -160,7 +160,7 @@ class Window(QWidget):
             equity.setText(str(stock.equity))
             daily_return.setText(str(stock.daily_return))
 
-            self.portfolio_value.setText(str(calculate_total_equity()))
+            # self.portfolio_value.setText(str(calculate_total_equity()))
             self.overall_return.setText(str(calculate_overall_return()))
             self.update()
 
@@ -209,7 +209,7 @@ class Window(QWidget):
             data.update({stock.ticker: stock.number_owned})
 
         # Save stocks information to file
-        with open("resources/stock_record.json") as f:
+        with open("stock_record.json") as f:
             json.dump(data, f)
 
 

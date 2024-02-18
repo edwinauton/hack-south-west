@@ -2,7 +2,7 @@ import getLiveData
 import json
 tickers = ["AAPL", "TSLA", "MSFT", "GOOGL", "AMZN", "NVDA"]
 def saveData(date, timeframe, ticker, data):
-    path = "../resources/"
+    path = "../api_data/"
     filename = date + "_" + timeframe + "_" + ticker + ".json"
 
     with open(path + filename, "w") as file:

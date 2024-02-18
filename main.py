@@ -8,6 +8,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QLabel, QGridLayout, QScrollArea, QWidget, QHBoxLayout, QVBoxLayout, QFrame
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
+
 import gui_utils as utils
 
 
@@ -160,8 +161,8 @@ class Window(QWidget):
             equity.setText(str(stock.equity))
             daily_return.setText(str(stock.daily_return))
 
-            self.portfolio_value.setText(str(calculate_total_equity()))
-            self.overall_return.setText(str(calculate_overall_return()))
+            self.portfolio_value.setText(f"Portfolio Value: {self.calculate_total_equity()}")
+            self.overall_return.setText(f"Today's Return: {self.calculate_overall_return()}")
 
     # Function to plot and stylise graph
     def plot_graph(self, data):

@@ -4,6 +4,7 @@ import sys
 from functools import partial
 
 import matplotlib.pyplot as plt
+import mplcursors
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QApplication, QLabel, QGridLayout, QScrollArea, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QSizePolicy, QFrame)
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -12,16 +13,17 @@ from share import Share
 
 
 def create_button(text):
-	"""Creates a button with the given text"""
 	button = QPushButton()
 	button.setText(text)
 	return button
+
 
 def create_line():
 	line = QFrame()
 	line.setFrameShape(QFrame.HLine)
 	line.setObjectName("line")
 	return line
+
 
 def format(data):
 	string = str(data)
@@ -31,8 +33,21 @@ def format(data):
 		return "$" + string
 
 
+def colour(label):
+	if "-" in label.text():
+		label.setObjectName("loss")
+	else:
+		label.setObjectName("gain")
+
+
+def colour_heading(heading):
+	if "-" in heading.text():
+		heading.setObjectName("heading_loss")
+	else:
+		heading.setObjectName("heading_gain")
+
+
 def create_label(text):
-	"""Creates a label with the given text and centres it"""
 	label = QLabel(text)
 	label.setAlignment(Qt.AlignCenter)
 	label.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
@@ -133,6 +148,7 @@ class Window(QWidget):
 			# Change
 			value = format(share.change)
 			self.change = create_label(value)
+			colour(self.change)
 			row.addWidget(self.change)
 
 			# Equity
@@ -143,6 +159,7 @@ class Window(QWidget):
 			# Daily Return
 			value = format(share.daily_return)
 			self.daily_return = create_label(value)
+			colour(self.daily_return)
 			row.addWidget(self.daily_return)
 
 			self.shares_owned = create_label(str(share.number_owned))
@@ -166,11 +183,13 @@ class Window(QWidget):
 		layout = QGridLayout()
 
 		# Titles
-		self.portfolio_value = create_label(f"Portfolio Value: {format(round(sum(share.equity for share in shares), 2))}")
+		value = format(round(sum(share.equity for share in shares), 2))
+		self.portfolio_value = create_label(f"Portfolio Value: {value}")
 		self.portfolio_value.setObjectName("heading")
 		layout.addWidget(self.portfolio_value, 0, 1, 1, 1)
-		self.overall_return = create_label(f"Today's Return: {format(round(sum(share.daily_return for share in shares), 2))}")
-		self.overall_return.setObjectName("heading")
+		value = format(round(sum(share.daily_return for share in shares), 2))
+		self.overall_return = create_label(f"Today's Return: {value}")
+		colour_heading(self.overall_return)
 		layout.addWidget(self.overall_return, 1, 1, 1, 1)
 
 		# Scrollable Table
@@ -206,7 +225,6 @@ class Window(QWidget):
 		self.update()
 
 	def plot(self, data):
-		"""Plots the data given in an array on the graph shown in the window"""
 		self.figure.clear()
 		graph = self.figure.add_subplot(111)
 		graph.xaxis.set_visible(False)
@@ -217,6 +235,7 @@ class Window(QWidget):
 			graph.spines[axis].set_linewidth(3)
 
 		graph.plot(data[0], data[1], color='#2da9b9', linewidth=2, marker='.', linestyle='-')
+		mplcursors.cursor(hover=True).connect('add', show_info)
 		self.canvas.draw()
 
 

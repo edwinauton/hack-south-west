@@ -8,9 +8,35 @@ QLabel#heading {
   font-weight: bold;
 }
 
+QLabel#heading_gain {
+  color: #076105;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+
+QLabel#heading_loss {
+  color: #9f1919;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+
 QLabel#subheading {
   color: #2da9b9;
   font-size: 25px;
+  font-weight: bold;
+}
+
+QLabel#gain {
+  color: #076105;
+  font-size: 18;
+  font-weight: bold;
+}
+
+QLabel#loss {
+  color: #9f1919;
+  font-size: 18;
   font-weight: bold;
 }
 

@@ -22,6 +22,7 @@ class Window(QWidget):
         self.stocks = list()
         self.portfolio_value = QLabel()
         self.overall_return = QLabel()
+        self.vbox = QVBoxLayout()
 
         self.init()
 
@@ -54,13 +55,14 @@ class Window(QWidget):
         stocks_owned = utils.create_label("Stocks Owned")
         stocks_owned.setObjectName("subheading")
         header.addWidget(stocks_owned)
+        header.setContentsMargins(10, 10, 25, 10)
 
-        self.table.addLayout(header)
+        self.vbox.addLayout(header)
 
         # Add spacing after header
-        self.table.addWidget(utils.create_line())
-        self.table.insertSpacing(1, 5)
-        self.table.addWidget(utils.create_line())
+        self.vbox.addWidget(utils.create_line())
+        self.vbox.insertSpacing(1, 5)
+        self.vbox.addWidget(utils.create_line())
 
         self.stocks = utils.get_stocks_list()
 
@@ -129,7 +131,8 @@ class Window(QWidget):
         self.scroll.setWidgetResizable(True)
         self.scroll.setWidget(self.widget)
         self.scroll.setFrameShape(QFrame.NoFrame)
-        layout.addWidget(self.scroll, 0, 3, 3, 1)
+        self.vbox.addWidget(self.scroll)
+        layout.addLayout(self.vbox, 0, 3, 3, 1)
 
         # Graph
         layout.addWidget(self.canvas, 2, 0, 1, 3)
@@ -143,10 +146,12 @@ class Window(QWidget):
         self.setLayout(layout)
         self.show()
 
+    # Function to update the graph being shown
     def update_graph(self, stock):
         self.plot_graph(stock.create_graph())
         self.update()
 
+    # Function to update all values changed when a stock is sold/bought
     def update_stock(self, value, stock, equity, daily_return, stocks_owned):
         if stock.number_owned > 0 or value == 1:
             stock.number_owned += value
@@ -155,20 +160,11 @@ class Window(QWidget):
             equity.setText(str(stock.equity))
             daily_return.setText(str(stock.daily_return))
 
-            # self.portfolio_value.setText(str(calculate_total_equity()))
-            # self.overall_return.setText(str(calculate_overall_return()))
+            self.portfolio_value.setText(str(calculate_total_equity()))
+            self.overall_return.setText(str(calculate_overall_return()))
             self.update()
 
-    def save_stocks(self):
-        # Convert data to dictionary
-        data = dict()
-        for stock in self.stocks:
-            data.update({stock.ticker: stock.number_owned})
-
-        # Save stocks information to file
-        with open("stock_record.json") as f:
-            json.dump(data, f)
-
+    # Function to plot and stylise graph
     def plot_graph(self, data):
         # Setup figure to plot graph
         self.figure.clear()
@@ -185,7 +181,7 @@ class Window(QWidget):
             graph.spines[axis].set_linewidth(3)
 
         # Plot data, using a coloured line
-        graph.plot(data[0], data[1], color="#2da9b9", linewidth=2, marker=".", linestyle="-")
+        graph.plot(data[0], data[1], color="#2da9b9", linewidth=2, marker="", linestyle="-")
 
         # Hover animation
         def show_annotation(sel):
@@ -197,14 +193,24 @@ class Window(QWidget):
 
         self.canvas.draw()
 
+    # Function to calculate total portfolio value
     def calculate_total_equity(self):
         return round(sum(stock.equity for stock in self.stocks), 2)
 
+    # Function to calculate total income for the day
     def calculate_overall_return(self):
         return round(sum(stock.daily_return for stock in self.stocks), 2)
 
+    # Function which runs when the program is closed; saves stocks to a file
     def closeEvent(self, event):
-        self.save_stocks()
+        # Convert data to dictionary
+        data = dict()
+        for stock in self.stocks:
+            data.update({stock.ticker: stock.number_owned})
+
+        # Save stocks information to file
+        with open("stock_record.json") as f:
+            json.dump(data, f)
 
 
 if __name__ == "__main__":

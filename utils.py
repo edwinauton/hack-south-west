@@ -69,7 +69,10 @@ def get_stocks_list():
             filepath = subdir + os.sep + file
             if file.endswith(".json"):
                 filename = os.path.splitext(file)[0]
-                number_of_stocks = data[filename]
+                try:
+                    number_of_stocks = data[filename]
+                except KeyError:
+                    number_of_stocks = 0
                 stocks_list.append(Stock(filepath, number_of_stocks))
 
     return stocks_list

@@ -42,3 +42,24 @@
  QFrame#line {
      background-color: #2da9b9;
 }
+ QScrollBar:vertical {
+     border: 2px solid #2da9b9;
+     background: #ffffff;
+     width: 20px;
+     margin: 0px 0px 0px 0px;
+}
+ QScrollBar::handle:vertical {
+     background: #2da9b9;
+}
+ QScrollBar::add-line:vertical {
+     background: #2da9b9;
+     height: 0px;
+     subcontrol-position: bottom;
+     subcontrol-origin: margin;
+}
+ QScrollBar::sub-line:vertical {
+     background: #2da9b9;
+     height: 0px;
+     subcontrol-position: top;
+     subcontrol-origin: margin;
+}

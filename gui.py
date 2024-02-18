@@ -4,7 +4,6 @@ import sys
 from functools import partial
 
 import matplotlib.pyplot as plt
-from matplotlib import dates as mdates
 import mplcursors
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QApplication, QLabel, QGridLayout, QScrollArea, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QSizePolicy, QFrame)

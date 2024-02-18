@@ -1,60 +1,44 @@
-QWidget {
-  background-color: #ffffff;
+* {
+     font-weight: bold;
 }
-
-QLabel#heading {
-  color: #2da9b9;
-  font-size: 35px;
-  font-weight: bold;
+ QWidget {
+     background-color: #ffffff;
 }
-
-QLabel#heading_gain {
-  color: #076105;
-  font-size: 30px;
-  font-weight: bold;
+ QLabel#heading {
+     color: #2da9b9;
+     font-size: 35px;
 }
-
-
-QLabel#heading_loss {
-  color: #9f1919;
-  font-size: 30px;
-  font-weight: bold;
+ QLabel#heading_gain {
+     color: #076105;
+     font-size: 30px;
 }
-
-
-QLabel#subheading {
-  color: #2da9b9;
-  font-size: 25px;
-  font-weight: bold;
+ QLabel#heading_loss {
+     color: #9f1919;
+     font-size: 30px;
 }
-
-QLabel#gain {
-  color: #076105;
-  font-size: 18;
-  font-weight: bold;
+ QLabel#subheading {
+     color: #2da9b9;
+     font-size: 25px;
 }
-
-QLabel#loss {
-  color: #9f1919;
-  font-size: 18;
-  font-weight: bold;
+ QLabel#gain {
+     color: #076105;
+     font-size: 18;
 }
-
-QPushButton {
-    background-color: #2da9b9;
-    color: #ffffff;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    min-width: 5em;
-    padding: 5px;
+ QLabel#loss {
+     color: #9f1919;
+     font-size: 18;
 }
-
-QLabel {
-    font-size: 18px;
-    font-weight: bold;
+ QPushButton {
+     background-color: #2da9b9;
+     color: #ffffff;
+     border-radius: 10px;
+     font-size: 18px;
+     min-width: 5em;
+     padding: 5px;
 }
-
-QFrame#line {
-    background-color: #2da9b9;
+ QLabel {
+     font-size: 18px;
+}
+ QFrame#line {
+     background-color: #2da9b9;
 }

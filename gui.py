@@ -2,13 +2,14 @@ import os
 import json
 import sys
 from functools import partial
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QApplication, QLabel, QGridLayout, QScrollArea, QWidget, QHBoxLayout, QVBoxLayout,
 							 QPushButton, QSizePolicy)
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-
+from PyQt5.QtGui import QIcon
 from share import Share
 
 
@@ -17,6 +18,13 @@ def create_button(text):
 	button = QPushButton()
 	button.setText(text)
 	return button
+
+def format(data):
+	string = str(data)
+	if string[0] == "-":
+		return "-$" + string[1:]
+	else:
+		return "$" + string
 
 
 def create_label(text):
@@ -70,18 +78,23 @@ class Window(QWidget):
 		header = QHBoxLayout()
 
 		ticker = create_label("Ticker")
+		ticker.setObjectName("subheading")
 		header.addWidget(ticker)
 
-		last_price = create_label("Last Price")
-		header.addWidget(last_price)
+		price = create_label("Price")
+		price.setObjectName("subheading")
+		header.addWidget(price)
 
 		change = create_label("Change")
+		change.setObjectName("subheading")
 		header.addWidget(change)
 
 		equity = create_label("Equity")
+		equity.setObjectName("subheading")
 		header.addWidget(equity)
 
 		daily_return = create_label("Return")
+		daily_return.setObjectName("subheading")
 		header.addWidget(daily_return)
 
 		spacer = create_label("")
@@ -89,6 +102,7 @@ class Window(QWidget):
 		header.addWidget(spacer)
 
 		shares_owned = create_label("Shares Owned")
+		shares_owned.setObjectName("subheading")
 		header.addWidget(shares_owned)
 
 		self.table.addLayout(header)
@@ -108,19 +122,23 @@ class Window(QWidget):
 			row.addWidget(self.ticker)
 
 			# Last Price
-			self.last_price = create_label(str(share.start_price))
+			value = format(share.start_price)
+			self.last_price = create_label(value)
 			row.addWidget(self.last_price)
 
 			# Change
-			self.change = create_label(str(share.change))
+			value = format(share.change)
+			self.change = create_label(value)
 			row.addWidget(self.change)
 
 			# Equity
-			self.equity = create_label(str(share.equity))
+			value = format(share.equity)
+			self.equity = create_label(value)
 			row.addWidget(self.equity)
 
 			# Daily Return
-			self.daily_return = create_label(str(share.daily_return))
+			value = format(share.daily_return)
+			self.daily_return = create_label(value)
 			row.addWidget(self.daily_return)
 
 			self.shares_owned = create_label(str(share.number_owned))
@@ -143,9 +161,11 @@ class Window(QWidget):
 		layout = QGridLayout()
 
 		# Titles
-		self.profile_value = create_label(f"Profile Value: {round(sum(share.equity for share in shares), 2)}")
+		self.profile_value = create_label(f"Profile Value: {format(round(sum(share.equity for share in shares), 2))}")
+		self.profile_value.setObjectName("heading")
 		layout.addWidget(self.profile_value, 0, 1, 1, 1)
-		self.overall_return = create_label(f"Today's Return: {round(sum(share.daily_return for share in shares), 2)}")
+		self.overall_return = create_label(f"Today's Return: {format(round(sum(share.daily_return for share in shares), 2))}")
+		self.overall_return.setObjectName("heading")
 		layout.addWidget(self.overall_return, 1, 1, 1, 1)
 
 		# Scrollable Table
@@ -160,7 +180,9 @@ class Window(QWidget):
 
 		# Window Properties
 		self.setWindowTitle('Stock Trading Simulator')
-		self.setGeometry(10, 10, 1700, 700)
+		self.setWindowIcon(QIcon("icon.jpg"))
+		self.setGeometry(10, 10, 1920, 1080)
+		self.setMinimumSize(1280, 720)
 		self.setLayout(layout)
 		self.show()
 
@@ -182,11 +204,16 @@ class Window(QWidget):
 		"""Plots the data given in an array on the graph shown in the window"""
 		self.figure.clear()
 		graph = self.figure.add_subplot(111)
-		graph.plot(data[0], data[1], marker='.', linestyle='-')
+		graph.xaxis.set_visible(False)
+		for axis in ['top', 'bottom', 'left', 'right']:
+			graph.spines[axis].set_color('#2da9b9')
+			graph.spines[axis].set_linewidth(3)
+		graph.plot(data[0], data[1], color='#2da9b9', linewidth=2, marker='.', linestyle='-')
 		self.canvas.draw()
 
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
+	app.setStyleSheet(Path("styles.qss").read_text())
 	ex = Window()
 	sys.exit(app.exec_())

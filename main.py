@@ -8,7 +8,6 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QLabel, QGridLayout, QScrollArea, QWidget, QHBoxLayout, QVBoxLayout, QFrame
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
-
 import gui_utils as utils
 
 
@@ -209,7 +208,7 @@ class Window(QWidget):
             data.update({stock.ticker: stock.number_owned})
 
         # Save stocks information to file
-        with open("stock_record.json") as f:
+        with open("stock_record.json", "w") as f:
             json.dump(data, f)
 
 

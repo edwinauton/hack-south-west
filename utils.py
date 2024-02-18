@@ -10,13 +10,13 @@ from stock import Stock
 # Function to create a button with the given text
 def create_button(text):
     button = QPushButton()
-    button.setText(text)
+    button.setText(str(text))
     return button
 
 
 # Function to create a label with the given text
 def create_label(text):
-    label = QLabel(text)
+    label = QLabel(str(text))
     label.setAlignment(Qt.AlignCenter)
     label.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
     return label

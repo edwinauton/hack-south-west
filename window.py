@@ -1,4 +1,5 @@
 import sys
+import json
 from functools import partial
 
 import matplotlib.pyplot as plt
@@ -18,17 +19,10 @@ class Window(QWidget):
         self.scroll = QScrollArea()
         self.widget = QWidget()
         self.table = QVBoxLayout()
+        self.stocks = list()
         self.portfolio_value = QLabel()
         self.overall_return = QLabel()
-        self.ticker = QPushButton()
-        self.last_price = QLabel()
-        self.change = QLabel()
-        self.equity = QLabel()
-        self.daily_return = QLabel()
-        self.buy_button = QPushButton()
-        self.sell_button = QPushButton()
-        self.stocks_owned = QLabel()
-        self.stocks = list()
+
         self.init()
 
     def init(self):
@@ -62,59 +56,58 @@ class Window(QWidget):
         header.addWidget(stocks_owned)
 
         self.table.addLayout(header)
-        self.table.addWidget(utils.create_line())
 
-        # Add spacing after heading
-        self.table.insertSpacing(1, 10)
+        # Add spacing after header
+        self.table.addWidget(utils.create_line())
+        self.table.insertSpacing(1, 5)
         self.table.addWidget(utils.create_line())
 
         self.stocks = utils.get_stocks_list()
 
         for stock in self.stocks:
-            # Setup Row
-            row = QHBoxLayout()
-
             # Ticker Button
-            self.ticker = utils.create_button(str(stock.ticker))
-            self.ticker.clicked.connect(partial(self.update_graph, stock))
-            row.addWidget(self.ticker)
+            ticker = utils.create_button(stock.ticker)
+            ticker.clicked.connect(partial(self.update_graph, stock))
 
             # Last Price
             value = utils.format(stock.start_price)
-            self.last_price = utils.create_label(value)
-            row.addWidget(self.last_price)
+            last_price = utils.create_label(value)
 
             # Change
             value = utils.format(stock.change)
-            self.change = utils.create_label(value)
-            utils.colour(self.change)
-            row.addWidget(self.change)
+            change = utils.create_label(value)
+            utils.colour(change)
 
             # Equity
             value = utils.format(stock.equity)
-            self.equity = utils.create_label(value)
-            row.addWidget(self.equity)
+            equity = utils.create_label(value)
 
             # Daily Return
             value = utils.format(stock.daily_return)
-            self.daily_return = utils.create_label(value)
-            utils.colour(self.daily_return)
-            row.addWidget(self.daily_return)
+            daily_return = utils.create_label(value)
+            utils.colour(daily_return)
 
-            self.stocks_owned = utils.create_label(str(stock.number_owned))
+            stocks_owned = utils.create_label(stock.number_owned)
 
             # Buy Button
-            self.buy_button = utils.create_button("Buy")
-            self.buy_button.clicked.connect(partial(self.update_stocks, 1, stock))
-            row.addWidget(self.buy_button)
+            buy_button = utils.create_button("Buy")
+            buy_button.clicked.connect(partial(self.update_stock, 1, stock, equity, daily_return, stocks_owned))
 
             # Sell Button
-            self.sell_button = utils.create_button("Sell")
-            self.sell_button.clicked.connect(partial(self.update_stocks, -1, stock))
-            row.addWidget(self.sell_button)
+            sell_button = utils.create_button("Sell")
+            sell_button.clicked.connect(partial(self.update_stock, -1, stock, equity, daily_return, stocks_owned))
 
-            # Stocks Owned
-            row.addWidget(self.stocks_owned)
+            # Setup and add cells to row
+            row = QHBoxLayout()
+            row.addWidget(ticker)
+            row.addWidget(last_price)
+            row.addWidget(change)
+            row.addWidget(equity)
+            row.addWidget(daily_return)
+            row.addWidget(buy_button)
+            row.addWidget(sell_button)
+            row.addWidget(stocks_owned)
+
             self.table.addLayout(row)
             self.table.addWidget(utils.create_line())
 
@@ -122,11 +115,11 @@ class Window(QWidget):
         layout = QGridLayout()
 
         # Titles
-        value = utils.format(round(sum(stock.equity for stock in self.stocks), 2))
+        value = utils.format(self.calculate_total_equity())
         self.portfolio_value = utils.create_label(f"Portfolio Value: {value}")
         self.portfolio_value.setObjectName("heading")
         layout.addWidget(self.portfolio_value, 0, 1, 1, 1)
-        value = utils.format(round(sum(stock.daily_return for stock in self.stocks), 2))
+        value = utils.format(self.calculate_overall_return())
         self.overall_return = utils.create_label(f"Today's Return: {value}")
         utils.colour_heading(self.overall_return)
         layout.addWidget(self.overall_return, 1, 1, 1, 1)
@@ -154,21 +147,27 @@ class Window(QWidget):
         self.plot_graph(stock.create_graph())
         self.update()
 
-    def update_stocks(self, value, stock):
-        stock.number_owned += value
+    def update_stock(self, value, stock, equity, daily_return, stocks_owned):
+        if stock.number_owned > 0 or value == 1:
+            stock.number_owned += value
+            stocks_owned.setText(str(stock.number_owned))
+            stock.update()
+            equity.setText(str(stock.equity))
+            daily_return.setText(str(stock.daily_return))
 
-        """
-		# Convert data to dictionary
-		data = dict()
-		for stock in self.stocks:
-			data.update({stock.ticker: stock.number_owned})
+            # self.portfolio_value.setText(str(calculate_total_equity()))
+            # self.overall_return.setText(str(calculate_overall_return()))
+            self.update()
 
-		# Save stocks information to file
-		with open("stock_record.json") as f:
-			json.dump(data, f)
+    def save_stocks(self):
+        # Convert data to dictionary
+        data = dict()
+        for stock in self.stocks:
+            data.update({stock.ticker: stock.number_owned})
 
-		self.update()
-		"""
+        # Save stocks information to file
+        with open("stock_record.json") as f:
+            json.dump(data, f)
 
     def plot_graph(self, data):
         # Setup figure to plot graph
@@ -197,6 +196,15 @@ class Window(QWidget):
         cursor.connect("add", show_annotation)
 
         self.canvas.draw()
+
+    def calculate_total_equity(self):
+        return round(sum(stock.equity for stock in self.stocks), 2)
+
+    def calculate_overall_return(self):
+        return round(sum(stock.daily_return for stock in self.stocks), 2)
+
+    def closeEvent(self, event):
+        self.save_stocks()
 
 
 if __name__ == "__main__":

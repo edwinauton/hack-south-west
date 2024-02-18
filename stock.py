@@ -4,14 +4,15 @@ import pandas as pd
 
 
 class Stock:
-    def __init__(self, json_file, stocks_owned):
+    def __init__(self, json_file, number_owned):
         self.json_file = json_file
-        self.number_owned = stocks_owned
+        self.number_owned = number_owned
         self.ticker = self.process_json()[0]
         self.start_price = self.process_json()[1]
-        self.change = self.process_json()[2]
-        self.equity = self.process_json()[3]
-        self.daily_return = self.process_json()[4]
+        self.end_price = self.process_json()[2]
+        self.change = self.process_json()[3]
+        self.equity = self.process_json()[4]
+        self.daily_return = self.process_json()[5]
 
     # Function to convert raw API data into tuple of needed information
     def process_json(self):
@@ -24,7 +25,7 @@ class Stock:
             change = end_price - start_price
             equity = self.number_owned * end_price
             daily_return = self.number_owned * change
-        return ticker, round(start_price, 2), round(change, 2), round(equity, 2), round(daily_return, 2)
+        return ticker, round(start_price, 2), round(end_price, 2), round(change, 2), round(equity, 2), round(daily_return, 2)
 
     # Function to convert raw API data into graph to display
     def create_graph(self):
@@ -45,3 +46,9 @@ class Stock:
 
         # Return the x and y values
         return df["Time"], df["High"]
+
+    def update(self):
+        equity = self.number_owned * self.end_price
+        self.equity = round(equity, 2)
+        daily_return = self.number_owned * self.change
+        self.daily_return = round(daily_return, 2)

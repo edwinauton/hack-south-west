@@ -61,7 +61,6 @@ class Window(QWidget):
 
         # Add spacing after header
         self.vbox.addWidget(utils.create_line())
-        self.vbox.insertSpacing(1, 5)
         self.vbox.addWidget(utils.create_line())
 
         self.stocks = utils.get_stocks_list()
@@ -153,7 +152,7 @@ class Window(QWidget):
 
     # Function to update all values changed when a stock is sold/bought
     def update_stock(self, value, stock, equity, daily_return, stocks_owned):
-        if stock.number_owned > 0 or value == 1:
+        if stock.number_owned > 0 or value > 0:
             stock.number_owned += value
             stocks_owned.setText(str(stock.number_owned))
             stock.update()

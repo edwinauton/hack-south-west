@@ -4,6 +4,7 @@ import sys
 from functools import partial
 
 import matplotlib.pyplot as plt
+from matplotlib import dates as mdates
 import mplcursors
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QApplication, QLabel, QGridLayout, QScrollArea, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QSizePolicy, QFrame)
@@ -235,7 +236,14 @@ class Window(QWidget):
 			graph.spines[axis].set_linewidth(3)
 
 		graph.plot(data[0], data[1], color='#2da9b9', linewidth=2, marker='.', linestyle='-')
-		mplcursors.cursor(hover=True).connect('add', show_info)
+
+		# Hover animation
+		def show_annotation(sel):
+			_, y = sel.target
+			sel.annotation.set_text(f"{y:.3f}")
+		cursor = mplcursors.cursor(graph, hover=True)
+		cursor.connect('add', show_annotation)
+
 		self.canvas.draw()
 
 

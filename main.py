@@ -12,8 +12,8 @@ import gui_utils as utils
 
 
 class Window(QWidget):
-    def __init__(self, parent=None):
-        super(Window, self).__init__(parent)
+    def __init__(self):
+        super().__init__()
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
         self.scroll = QScrollArea()
@@ -160,9 +160,8 @@ class Window(QWidget):
             equity.setText(str(stock.equity))
             daily_return.setText(str(stock.daily_return))
 
-            # self.portfolio_value.setText(str(calculate_total_equity()))
+            self.portfolio_value.setText(str(calculate_total_equity()))
             self.overall_return.setText(str(calculate_overall_return()))
-            self.update()
 
     # Function to plot and stylise graph
     def plot_graph(self, data):
@@ -219,5 +218,5 @@ if __name__ == "__main__":
     # Use QSS style sheets
     app.setStyleSheet(open("styles/styles.qss").read())
 
-    ex = Window()
+    window = Window()
     sys.exit(app.exec_())
